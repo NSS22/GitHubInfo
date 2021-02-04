@@ -1,0 +1,106 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "GitHub Repositories Information",
+    "description": "Show user repositories information",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:4000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Repositories"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/repositories/{name}": {
+      "post": {
+        "tags": [
+          "Repositories"
+        ],
+        "description": "Get user GitHub repositories information",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "description": "GitHub user name",
+            "type": "string",
+            "example": "NSS"
+          },
+          {
+            "name": "accept",
+            "in": "body",
+            "description": "Request header property",
+            "type": "string",
+            "example": ["application/json", "application/xml"]
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Repositories Information",
+            "examples": {
+
+            },
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Repository"
+              }
+            }
+          },
+          "default": {
+            "description": "Failed request",
+            "schema": {
+              "$ref": "#/definitions/FailedRequest"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Repository": {
+      "properties": {
+        "repositoryName": {
+          "type": "string"
+        },
+        "ownerLogin": {
+          "type": "boolean"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "lastCommitSha": {
+          "type": "string"
+        }
+      }
+    },
+    "FailedRequest": {
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "message": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

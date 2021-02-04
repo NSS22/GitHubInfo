@@ -1,0 +1,40 @@
+service:
+  name: github-repositories-service
+
+plugins:
+  - serverless-fargate-plugin
+
+provider:
+  name: aws
+  profile: "default"
+  stage: ${opt:stage,'dev'}
+  region: eu-central-1
+  logRetentionInDays: 7
+custom:
+  ecrImagePath:
+    accountNumber: 020712779899
+    region: eu-central-1
+    imageName: github-info
+    imageTag: latest
+  fargate:
+    vpc:
+      cidr: 10.0.0.0/16
+      subnets:
+        - 10.0.0.0/24
+        - 10.0.1.0/24
+    services:
+      - name: github-info
+        cpu: 512
+        memory: 1024
+        port: 4000
+        healthCheckUri: /
+        healthCheckInterval: 6
+        image: "${self:custom.ecrImagePath.accountNumber}.dkr.ecr.${self:custom.ecrImagePath.region}.amazonaws.com/${self:custom.ecrImagePath.imageName}:${self:custom.ecrImagePath.imageTag}"
+        entryPoint:
+          - npm
+          - run
+          - deploy:dev
+        environment:
+          PRODUCTION: false
+        protocols:
+          - protocol: HTTP

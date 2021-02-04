@@ -1,0 +1,5 @@
+export const RESPONSE_STATUS = {
+    SUCCESS: 200,
+    NOT_FOUND: 404,
+    NOT_ACCEPTABLE: 415,
+};
