@@ -1,40 +1,56 @@
 service:
-  name: github-repositories-service
+  name: github
 
 plugins:
   - serverless-fargate-plugin
+  - serverless-dotenv-plugin
 
 provider:
   name: aws
   profile: "default"
   stage: ${opt:stage,'dev'}
-  region: eu-central-1
+  region: ${env:REGION}
   logRetentionInDays: 7
 custom:
+  dotenv:
+    basePath: ./
   ecrImagePath:
-    accountNumber: 020712779899
-    region: eu-central-1
-    imageName: github-info
-    imageTag: latest
+    accountNumber: ${env:ACCOUNT_NUMBER}
+    region: ${env:REGION}
+    imageName: ${env:IMAGE_NAME}
+    imageTag: ${env:IMAGE_TAG}
   fargate:
-    vpc:
-      cidr: 10.0.0.0/16
-      subnets:
-        - 10.0.0.0/24
-        - 10.0.1.0/24
-    services:
-      - name: github-info
-        cpu: 512
-        memory: 1024
-        port: 4000
-        healthCheckUri: /
-        healthCheckInterval: 6
-        image: "${self:custom.ecrImagePath.accountNumber}.dkr.ecr.${self:custom.ecrImagePath.region}.amazonaws.com/${self:custom.ecrImagePath.imageName}:${self:custom.ecrImagePath.imageTag}"
-        entryPoint:
-          - npm
-          - run
-          - deploy:dev
-        environment:
-          PRODUCTION: false
-        protocols:
-          - protocol: HTTP
+    - clusterName: repositories
+      vpc:
+        cidr: ${env:CIDR}
+        subnets:
+          - ${env:SUBNET_ID_1}
+          - ${env:SUBNET_ID_2}
+      tags:
+        customer: You
+        owner: Me
+      disableELB: false
+      services:
+        - name: ${env:IMAGE_NAME}
+          cpu: 512
+          memory: 1024
+          port: 4000
+          healthCheckUri: /health
+          healthCheckInterval: 6
+          imageTag: ${self:custom.ecrImagePath.imageTag}
+          imageRepository: "${self:custom.ecrImagePath.accountNumber}.dkr.ecr.${self:custom.ecrImagePath.region}.amazonaws.com/${self:custom.ecrImagePath.imageName}"
+          autoScale:
+            min: 1
+            max: 2
+            cooldownIn: 30
+            cooldownOut: 60
+            metric: ECSServiceAverageCPUUtilization
+            targetValue: 75
+          entryPoint:
+            - npm
+            - run
+            - deploy:dev
+          environment:
+            PRODUCTION: true
+          protocols:
+            - protocol: HTTP

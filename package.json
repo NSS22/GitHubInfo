@@ -8,7 +8,7 @@
     "start:dev": "nodemon --legacy-watch",
     "build": "chmod +x ./build-and-push-docker-image.sh && ./build-and-push-docker-image.sh",
     "deploy": "npx sls deploy",
-    "destroy": "npx sls destroy",
+    "destroy": "npx sls remove",
     "deploy:dev": "npm install && npm run build && npm run deploy",
     "destroy:dev": "npm run destroy",
     "test": "jest --no-cache"

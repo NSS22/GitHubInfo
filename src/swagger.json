@@ -10,7 +10,6 @@
     }
   },
   "host": "localhost:4000",
-  "basePath": "/",
   "tags": [
     {
       "name": "Repositories"
@@ -46,7 +45,7 @@
             "in": "body",
             "description": "Request header property",
             "type": "string",
-            "example": ["application/json", "application/xml"]
+            "example": "one of values: 'application/json' or 'application/xml'"
           }
         ],
         "produces": [
@@ -65,7 +64,7 @@
               }
             }
           },
-          "default": {
+          "404": {
             "description": "Failed request",
             "schema": {
               "$ref": "#/definitions/FailedRequest"
