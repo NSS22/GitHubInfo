@@ -6,7 +6,7 @@
   "main": "src/server.ts",
   "scripts": {
     "start": "nodemon --legacy-watch",
-    "build:push:image": "chmod +x ./build-and-push-docker-image.sh && ./build-and-push-docker-image.sh",
+    "build:push:image": "./build-and-push-docker-image.sh",
     "test": "jest --no-cache",
     "lint": "eslint --ext .ts ./src"
   },
