@@ -1,24 +1,21 @@
-### Overview ###
+### Preconditions ###
+* node version: ```12.14.1```
 
+### Development ###
+* Clone repository: ```git clone https://github.com/NSS22/GitHubInfo.git```
 * Install dependencies: ```npm install```
-* Create ```.env``` file in root directory:
+* Create ```.env``` file in root directory and add property:
+  ```SERVER_PORT=4000```
+* Run server: ```npm run start```
   ```
-  #Server
-  SERVER_PORT=4000
-  
-  #AWS accout
-  ACCOUNT_NUMBER=...
-  REGION=...
-  IMAGE_NAME=github-info
-  IMAGE_TAG=default: latest
-  CIDR=...
-  SUBNET_ID_1=...
-  SUBNET_ID_2=...
-  ```
-* Run server: ```npm run start:dev```
-  ```
-  API information: http://localhost:4000/api-docs/
+  API information is accessible by: http://localhost:4000/api-docs/
   ```
 * Run test: ```npm test```
-* Deploy to AWS: ```npm run deploy:dev```
-* Destroy resource from AWS: ```npm run destroy:dev```
+
+### Scripts ###
+* Build and push project docker image to AWS ECR repository: 
+  ```npm run build:push:image```
+  ```
+  Before running script you need change "AWS accountId"
+  and "Region" in "build-and-push-docker-image.sh" file
+  ```

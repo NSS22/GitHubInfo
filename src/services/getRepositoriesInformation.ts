@@ -1,10 +1,14 @@
-import { RESPONSE_STATUS } from '../config/responseStatus';
+import { RESPONSE_STATUS } from '../constants/responseStatus';
 import handlerFunctions from './index';
 import { RepositorySuccessResponse, BranchSuccessResponse, Branch, Repository } from '../types';
 
-export async function getRepositoriesInformation(userName: string, headerAcceptValue: string) {
+export async function getRepositoriesInformation(userName: string) {
     try {
-        const repositories = await handlerFunctions.getRepositories(userName, headerAcceptValue);
+        const repositories = await handlerFunctions.getRepositories(userName);
+
+        if(!repositories) {
+            return repositories;
+        }
 
         if(repositories && repositories.status === RESPONSE_STATUS.SUCCESS) {
             const repositoriesInformation: any[] = [];
@@ -19,31 +23,36 @@ export async function getRepositoriesInformation(userName: string, headerAcceptV
                 const { name, owner: { login } = {} } = data[index] || {} as Repository;
                 const branch = branches[index] as BranchSuccessResponse;
                 if (branch) {
-                    const  { data: branchData } = branch as BranchSuccessResponse;
-                    const {
-                        name: branchName,
-                        commit: { sha } = {},
-                    } = branchData.slice(-1)[0] || {} as Branch;
+                    const  { data: branchesData } = branch as BranchSuccessResponse;
+                    const branches = branchesData.map((item: Branch) => {
+                        const {name , commit: { sha } = {} } = item;
+                        return {
+                            name,
+                            lastCommitSha: sha,
+                        };
+                    });
 
                     repositoriesInformation.push({
-                        repositoryName: name,
+                        name,
                         ownerLogin: login,
-                        branch: branchName,
-                        lastCommitSha: sha,
+                        branches,
                     });
                 } else {
                     repositoriesInformation.push({
-                        repositoryName: name,
+                        name,
                         ownerLogin: login,
                     });
                 }
             }
 
-            return repositoriesInformation;
+            return {
+                status: repositories.status,
+                data: repositoriesInformation,
+            };
         }
 
-        return repositories;
+        return  repositories;
     } catch (error) {
         console.error(error);
     }
-};
+}

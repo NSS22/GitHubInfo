@@ -5,16 +5,16 @@ import handlerFunctions from './index';
 describe('Get Repositories Information', () => {
 
     describe('getRepositoriesInformation is invoked',  () => {
-        it('should return repositories with branch information', async (done) => {
+        it('should return repositories with branch information', async () => {
             handlerFunctions.getRepositories = jest.fn()
                 .mockReturnValue({
                     status: 200,
                     data: [{
-                        "name": "Anjular2-Demo-Project",
-                        "full_name": "NSS22/Anjular2-Demo-Project",
-                        "private": false,
-                        "owner": {
-                            "login": "NSS22",
+                        'name': 'Anjular2-Demo-Project',
+                        'full_name': 'NSS22/Anjular2-Demo-Project',
+                        'private': false,
+                        'owner': {
+                            'login': 'NSS22',
                         }
                     }]
                 });
@@ -23,36 +23,40 @@ describe('Get Repositories Information', () => {
                 .mockReturnValue({
                     status: 200,
                     data: [{
-                        "name": "dev",
-                        "commit": {
-                            "sha": "1234",
+                        'name': 'dev',
+                        'commit': {
+                            'sha': '1234',
                         },
-                        "protected": false
+                        'protected': false,
                     }]
                 });
 
-            expect(await handlerFunctions.getRepositoriesInformation(anything(), anything()))
-                .toEqual([{
-                    "repositoryName": "Anjular2-Demo-Project",
-                    "ownerLogin": "NSS22",
-                    "branch": "dev",
-                    "lastCommitSha": "1234"
-                }]);
-            done();
+            expect(await handlerFunctions.getRepositoriesInformation(anything()))
+                .toEqual({
+                    status: 200,
+                    data: [{
+                        'name': 'Anjular2-Demo-Project',
+                        'ownerLogin': 'NSS22',
+                        'branches': [{
+                            'name': 'dev',
+                            'lastCommitSha': '1234',
+                        }]
+                    }],
+                });
         });
 
-        it('should return repositories without branch information', async (done) => {
+        it('should return repositories without branch information', async () => {
             handlerFunctions.getRepositories = jest.fn()
                 .mockReturnValue({
                     status: 200,
                     data: [{
-                        "name": "Anjular2-Demo-Project",
-                        "full_name": "NSS22/Anjular2-Demo-Project",
-                        "private": false,
-                        "owner": {
-                            "login": "NSS22",
+                        'name': 'Anjular2-Demo-Project',
+                        'full_name': 'NSS22/Anjular2-Demo-Project',
+                        'private': false,
+                        'owner': {
+                            'login': 'NSS22',
                         }
-                    }]
+                    }],
                 });
 
             handlerFunctions.getRepositoryBranches = jest.fn()
@@ -61,27 +65,29 @@ describe('Get Repositories Information', () => {
                     data: []
                 });
 
-            expect(await handlerFunctions.getRepositoriesInformation(anything(), anything()))
-                .toEqual([{
-                    "repositoryName": "Anjular2-Demo-Project",
-                    "ownerLogin": "NSS22"
-                }]);
-            done();
+            expect(await handlerFunctions.getRepositoriesInformation(anything()))
+                .toEqual({
+                    status: 200,
+                    data: [{
+                        'name': 'Anjular2-Demo-Project',
+                        'ownerLogin': 'NSS22',
+                        'branches': [],
+                    }]
+                });
         });
 
-        it('should return not found message', async (done) => {
+        it('should return not found message', async () => {
             handlerFunctions.getRepositories = jest.fn()
                 .mockReturnValue({
-                    status: 404,
-                    message: "Not Found",
+                    'status': 404,
+                    'message': 'Not Found',
                 });
 
-            expect(await handlerFunctions.getRepositoriesInformation(anything(), anything()))
+            expect(await handlerFunctions.getRepositoriesInformation(anything()))
                 .toEqual({
-                    "status": 404,
-                    "message": "Not Found",
+                    'status': 404,
+                    'message': 'Not Found',
                 });
-            done();
         });
     });
 });

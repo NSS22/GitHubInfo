@@ -1,4 +1,5 @@
-const axios = require('axios');
+import axios from 'axios';
+import { HEADERS_ACCEPT } from '../constants/requestHeaders';
 import { responseHandler } from '../libs/responseMapper';
 import { BranchSuccessResponse } from '../types';
 
@@ -6,8 +7,11 @@ export function getRepositoryBranches(repositoryFullName: string): Promise<Branc
     return axios
         .get(`https://api.github.com/repos/${repositoryFullName}/branches`, {
             headers: {
-                'Accept': 'application/json',
+                'Accept': HEADERS_ACCEPT.APP_JSON,
             }})
-        .then(responseHandler.branch);
+        .then(responseHandler.branch)
+        .catch((error: any) => {
+            const { status, data } = error.response;
+            return responseHandler.branch({ status, data });
+        });
 }
-

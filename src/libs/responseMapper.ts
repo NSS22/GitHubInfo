@@ -1,13 +1,13 @@
-import { RESPONSE_STATUS } from '../config/responseStatus';
+import { RESPONSE_STATUS, STATUS_MESSAGE } from '../constants';
 import { RepositorySuccessResponse, RepositoryFailedResponse, BranchSuccessResponse, Repository } from '../types';
 
 export const responseBuilder = {
     buildSuccessResponse: (status: number, data: Repository[]): RepositorySuccessResponse => (
         {
             status,
-            data: data.filter(({ forks }) => !forks),
+            data,
         }),
-    buildFailedResponse: (status: number, message: string): RepositoryFailedResponse => ({ status, message }),
+    buildFailedResponse: (status: number, message: string): RepositoryFailedResponse => ({ status, data: { status, message } }),
 };
 
 export const responseHandler = {
@@ -20,11 +20,11 @@ export const responseHandler = {
 
         switch(status) {
             case RESPONSE_STATUS.SUCCESS:
-                return responseBuilder.buildSuccessResponse(status, data);
-            case RESPONSE_STATUS.NOT_FOUND:
-            case RESPONSE_STATUS.NOT_ACCEPTABLE:
+                return responseBuilder.buildSuccessResponse(status, data.items);
+            case RESPONSE_STATUS.UNPROCESSABLE:
+                return responseBuilder.buildFailedResponse(RESPONSE_STATUS.NOT_FOUND, STATUS_MESSAGE[RESPONSE_STATUS.NOT_FOUND]);
             default:
-                return responseBuilder.buildFailedResponse(status, data.message);
+                return null;
         }
     },
     branch: (value: any): BranchSuccessResponse | null | undefined => {
@@ -34,6 +34,11 @@ export const responseHandler = {
 
         const { status, data } = value;
 
-        return status === RESPONSE_STATUS.SUCCESS ? ({ data }) : null;
+        switch(status) {
+            case RESPONSE_STATUS.SUCCESS:
+                return { data };
+            default:
+                return null;
+        }
     },
 };

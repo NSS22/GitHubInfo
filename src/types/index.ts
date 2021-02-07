@@ -5,25 +5,30 @@ export interface Repository {
         login: string;
     };
     forks: number;
-};
+}
 
 export interface Branch {
     name: string;
     commit: {
         sha: string;
     };
-};
+}
+
+export interface FailedRequest {
+    status: number;
+    message: string;
+}
 
 export interface RepositorySuccessResponse {
     status: number;
     data: Repository[];
-};
+}
 
 export interface RepositoryFailedResponse {
     status: number;
-    message: string;
-};
+    data: FailedRequest;
+}
 
 export interface BranchSuccessResponse {
     data: Branch[];
-};
+}

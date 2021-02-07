@@ -1,5 +1,6 @@
 import { responseHandler, responseBuilder } from './responseMapper';
-import { RepositorySuccessResponse, BranchSuccessResponse } from '../types';
+import { BranchSuccessResponse } from '../types';
+import { RESPONSE_STATUS, STATUS_MESSAGE } from '../constants';
 
 describe('Map Request Response', () => {
 
@@ -14,37 +15,27 @@ describe('Map Request Response', () => {
         it('should return success response', () => {
             const payload = {
                 status: 200,
-                data: [],
+                data: {
+                    items: []
+                },
             };
             const spyBuildSuccessResponse = jest.spyOn(responseBuilder, 'buildSuccessResponse');
 
-            expect(responseHandler.repository(payload as RepositorySuccessResponse))
+            expect(responseHandler.repository(payload))
                 .toEqual({ status: 200, data: [] });
             expect(spyBuildSuccessResponse).toBeCalledWith(200, []);
         });
 
         it('should return not found response', () => {
             const payload = {
-                status: 404,
+                status: 422,
                 data: { message: 'Not Found' },
             };
             const spyBuildFailedResponse = jest.spyOn(responseBuilder, 'buildFailedResponse');
 
             expect(responseHandler.repository(payload as any))
-                .toEqual({ status: 404, message: 'Not Found' });
-            expect(spyBuildFailedResponse).toBeCalledWith(404, 'Not Found');
-        });
-
-        it('should return not acceptable response',() => {
-            const payload = {
-                status: 406,
-                data: { message: 'Not Acceptable' },
-            };
-            const spyBuildFailedResponse = jest.spyOn(responseBuilder, 'buildFailedResponse');
-
-            expect(responseHandler.repository(payload as any))
-                .toEqual({ status: 406, message: 'Not Acceptable' });
-            expect(spyBuildFailedResponse).toBeCalledWith(406, 'Not Acceptable');
+                .toEqual({ status: 404, data: { status: 404, message: STATUS_MESSAGE[RESPONSE_STATUS.NOT_FOUND] }});
+            expect(spyBuildFailedResponse).toBeCalledWith(404, STATUS_MESSAGE[RESPONSE_STATUS.NOT_FOUND]);
         });
     });
 

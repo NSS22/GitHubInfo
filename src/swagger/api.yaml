@@ -1,0 +1,74 @@
+openapi: '3.0.0'
+info:
+  title: 'GitHub Repositories Information'
+  description: 'Show user repositories information'
+  version: '0.0.1'
+servers:
+  - url: 'localhost:4000'
+paths:
+  /repositories/{account name}:
+    get:
+      summary: 'Get user repositories information'
+      description: 'Returns a repositories information'
+      operationId: 'getRepositoriesInformation'
+      parameters:
+        - name: 'GitHub account name'
+          in: 'path'
+          required: true
+          type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Repository'
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedRequest'
+        '406':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FailedRequest'
+
+
+components:
+  schemas:
+    FailedRequest:
+      type: object
+      properties:
+        status:
+          type: string
+        message:
+          type: string
+      required:
+        - status
+        - message
+    Branch:
+      type: object
+      properties:
+        name:
+          type: string
+        lastCommitSha:
+          type: string
+      required:
+        - name
+        - lastCommitSha
+    Repository:
+      type: object
+      properties:
+        repositoryName:
+          type: string
+        ownerLogin:
+          type: string
+        branches:
+          type: array
+          items:
+            $ref: '#/components/schemas/Branch'
+      required:
+        - repositoryName
+        - ownerLogin
