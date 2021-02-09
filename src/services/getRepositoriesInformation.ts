@@ -1,4 +1,5 @@
 import { RESPONSE_STATUS } from '../constants/responseStatus';
+import gitHubHandlerFunctions from '../github-services';
 import handlerFunctions from './';
 import {
     RepositorySuccessResponse,
@@ -9,7 +10,7 @@ import {
 
 
 export async function getRepositoriesInformation(userName: string): Promise<RepositoriesInformationSuccess | RepositorySuccessResponse | RepositoryFailedResponse | null | undefined> {
-    const repositoryResponse = await handlerFunctions.getRepositories(userName);
+    const repositoryResponse = await gitHubHandlerFunctions.getRepositories(userName);
 
     if(!repositoryResponse || repositoryResponse.status !== RESPONSE_STATUS.SUCCESS) {
         return repositoryResponse;
@@ -18,7 +19,7 @@ export async function getRepositoriesInformation(userName: string): Promise<Repo
     const { data } = repositoryResponse as RepositorySuccessResponse;
     const branches = await Promise.all(data.map((repository)=> {
         const { full_name: repositoryFullName } = repository;
-        return handlerFunctions.getRepositoryBranches(repositoryFullName);
+        return gitHubHandlerFunctions.getRepositoryBranches(repositoryFullName);
     }));
 
     const repositoriesInformation = data.map((item: Repository, index: number) => {

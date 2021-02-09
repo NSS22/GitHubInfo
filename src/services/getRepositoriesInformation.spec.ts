@@ -1,12 +1,13 @@
 import { anything } from 'ts-mockito';
-import handlerFunctions from './index';
+import gitHubHandlerFunctions from '../github-services';
+import handlerFunctions from './';
 
 
 describe('Get Repositories Information', () => {
 
     describe('getRepositoriesInformation is invoked',  () => {
         it('should return repositories with branch information', async () => {
-            handlerFunctions.getRepositories = jest.fn()
+            gitHubHandlerFunctions.getRepositories = jest.fn()
                 .mockReturnValue({
                     status: 200,
                     data: [{
@@ -19,7 +20,7 @@ describe('Get Repositories Information', () => {
                     }]
                 });
 
-            handlerFunctions.getRepositoryBranches = jest.fn()
+            gitHubHandlerFunctions.getRepositoryBranches = jest.fn()
                 .mockReturnValue({
                     status: 200,
                     data: [{
@@ -46,7 +47,7 @@ describe('Get Repositories Information', () => {
         });
 
         it('should return repositories without branch information', async () => {
-            handlerFunctions.getRepositories = jest.fn()
+            gitHubHandlerFunctions.getRepositories = jest.fn()
                 .mockReturnValue({
                     status: 200,
                     data: [{
@@ -59,7 +60,7 @@ describe('Get Repositories Information', () => {
                     }],
                 });
 
-            handlerFunctions.getRepositoryBranches = jest.fn()
+            gitHubHandlerFunctions.getRepositoryBranches = jest.fn()
                 .mockReturnValue({
                     status: 200,
                     data: []
@@ -77,7 +78,7 @@ describe('Get Repositories Information', () => {
         });
 
         it('should return not found message', async () => {
-            handlerFunctions.getRepositories = jest.fn()
+            gitHubHandlerFunctions.getRepositories = jest.fn()
                 .mockReturnValue({
                     'status': 404,
                     'message': 'Not Found',

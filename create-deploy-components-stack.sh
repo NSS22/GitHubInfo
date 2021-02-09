@@ -9,6 +9,7 @@ aws cloudformation wait stack-create-complete --stack-name github-info-repo
 
 docker tag github-info:latest 020712779899.dkr.ecr.eu-central-1.amazonaws.com/github-info:latest
 docker push 020712779899.dkr.ecr.eu-central-1.amazonaws.com/github-info:latest
+
 aws cloudformation create-stack --stack-name github-info-network \
       --template-body file://cloudformation/network.yaml \
       --capabilities CAPABILITY_NAMED_IAM
