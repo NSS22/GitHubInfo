@@ -1,58 +1,37 @@
 import { RESPONSE_STATUS } from '../constants/responseStatus';
-import handlerFunctions from './index';
-import { RepositorySuccessResponse, Branch, Repository } from '../types';
+import handlerFunctions from './';
+import {
+    RepositorySuccessResponse,
+    RepositoriesInformationSuccess,
+    RepositoryFailedResponse,
+    Repository,
+} from '../types';
 
-export async function getRepositoriesInformation(userName: string) {
-    try {
-        const repositoryResponse = await handlerFunctions.getRepositories(userName);
 
-        if(!repositoryResponse) {
-            return repositoryResponse;
-        }
+export async function getRepositoriesInformation(userName: string): Promise<RepositoriesInformationSuccess | RepositorySuccessResponse | RepositoryFailedResponse | null | undefined> {
+    const repositoryResponse = await handlerFunctions.getRepositories(userName);
 
-        if(repositoryResponse && repositoryResponse.status === RESPONSE_STATUS.SUCCESS) {
-            const repositoriesInformation: any[] = [];
-            const { data } = repositoryResponse as RepositorySuccessResponse;
-            const branches = await Promise.all(data.map((repository)=> {
-                const { full_name: repositoryFullName } = repository;
-                return handlerFunctions.getRepositoryBranches(repositoryFullName);
-            }));
-
-            for (let index = 0; index < data.length; index++) {
-
-                const { name, owner: { login } = {} } = data[index] || {} as Repository;
-                const branch = branches[index];
-                if (branch) {
-                    const  { data: branchesData } = branch;
-                    const branches = branchesData.map((item: Branch) => {
-                        const {name , commit: { sha } = {} } = item;
-                        return {
-                            name,
-                            lastCommitSha: sha,
-                        };
-                    });
-
-                    repositoriesInformation.push({
-                        name,
-                        ownerLogin: login,
-                        branches,
-                    });
-                } else {
-                    repositoriesInformation.push({
-                        name,
-                        ownerLogin: login,
-                    });
-                }
-            }
-
-            return {
-                status: repositoryResponse.status,
-                data: repositoriesInformation,
-            };
-        }
-
-        return  repositoryResponse;
-    } catch (error) {
-        console.error(error);
+    if(!repositoryResponse || repositoryResponse.status !== RESPONSE_STATUS.SUCCESS) {
+        return repositoryResponse;
     }
+
+    const { data } = repositoryResponse as RepositorySuccessResponse;
+    const branches = await Promise.all(data.map((repository)=> {
+        const { full_name: repositoryFullName } = repository;
+        return handlerFunctions.getRepositoryBranches(repositoryFullName);
+    }));
+
+    const repositoriesInformation = data.map((item: Repository, index: number) => {
+        const { name, owner: { login } } = item;
+        return {
+            name,
+            ownerLogin: login,
+            branches: handlerFunctions.getBranchesInformation(branches[index]),
+        };
+    });
+
+    return {
+        status: repositoryResponse.status,
+        data: repositoriesInformation,
+    };
 }

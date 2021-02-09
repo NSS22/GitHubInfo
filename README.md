@@ -13,9 +13,11 @@
 * Run test: ```npm test```
 
 ### Scripts ###
-* Build and push project docker image to AWS ECR repository: 
-  ```npm run build:push:image```
+* Create and deploy AWS services: 
+  ```npm run create:stack```
   ```
-  Before running script you need change "AWS accountId"
-  and "Region" in "build-and-push-docker-image.sh" file
+  Before running script you need change "AWS accountId", "Region" and
+   "ParameterKey=ImageUrl" in "create-deploy-components-stack.sh" file
   ```
+* Delete created AWS services:
+  ```npm run delete:stack```

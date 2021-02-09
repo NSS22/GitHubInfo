@@ -4,7 +4,6 @@ export interface Repository {
     owner: {
         login: string;
     };
-    forks: number;
 }
 
 export interface Branch {
@@ -12,6 +11,17 @@ export interface Branch {
     commit: {
         sha: string;
     };
+}
+
+export interface BranchInformation {
+    name: string;
+    lastCommitSha: string;
+}
+
+export interface RepositoriesInformation {
+    name: string;
+    ownerLogin: string;
+    branches: BranchInformation[];
 }
 
 export interface FailedRequest {
@@ -31,4 +41,9 @@ export interface RepositoryFailedResponse {
 
 export interface BranchSuccessResponse {
     data: Branch[];
+}
+
+export interface RepositoriesInformationSuccess {
+    status: number;
+    data: RepositoriesInformation[],
 }

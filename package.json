@@ -6,7 +6,8 @@
   "main": "src/server.ts",
   "scripts": {
     "start": "nodemon --legacy-watch",
-    "build:push:image": "./build-and-push-docker-image.sh",
+    "create:stack": "./create-deploy-components-stack.sh",
+    "delete:stack": "./delete-components-stack.sh",
     "test": "jest --no-cache",
     "lint": "eslint --ext .ts ./src"
   },

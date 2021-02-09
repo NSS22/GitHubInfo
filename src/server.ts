@@ -19,7 +19,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(checkRequestHeaders);
-app.use('/repositories', routes);
+app.use('/', routes);
 
 app.listen( port, () => {
     console.log(`Server started at http://localhost:${ port }` );
