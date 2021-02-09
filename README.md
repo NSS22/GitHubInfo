@@ -8,7 +8,7 @@
   ```SERVER_PORT=4000```
 * Run server: ```npm run start```
   ```
-  API information is accessible by: http://localhost:4000/api-docs/
+  API information is accessible by: http://localhost:{{ SERVER_PORT }}/api-docs/
   ```
 * Run test: ```npm test```
 
@@ -16,8 +16,10 @@
 * Create and deploy AWS services: 
   ```npm run create:stack```
   ```
-  Before running script you need change "AWS accountId", "Region" and
-   "ParameterKey=ImageUrl" in "create-deploy-components-stack.sh" file
+  Before running script you need do changes.
+    - "create-deploy-components-stack.sh" file: replace values of "AWS accountId", "Region" and
+   "ParameterKey=ImageUrl"
+    - "Dockerfile" file: replace value of "EXPOSE" to "SERVER_PORT" from ".env"
   ```
 * Delete created AWS services:
   ```npm run delete:stack```
